@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastFood Manager – Dashboard</title>
+    <meta name="description" content="Panel de control para gestionar productos y categorías del restaurante.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
+    <aside class="sidebar glass-card" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🍔</span>
+            <span class="sidebar-title">FastFood</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-section="products" id="nav-products">
+                <span class="nav-icon">🍽️</span>
+                <span>Menú / Productos</span>
+            </button>
+            <button class="nav-btn" data-section="categories" id="nav-categories">
+                <span class="nav-icon">📂</span>
+                <span>Categorías</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-user" id="sidebar-user">
+            <span class="user-avatar">👤</span>
+            <div class="user-info">
+                <span class="user-name" id="user-name-display">Manager</span>
+                <span class="user-role" id="user-role-display">admin</span>
+            </div>
+        </div>
+
+        <button class="btn logout-btn" id="logout-btn">🚪 Cerrar Sesión</button>
+    </aside>
+
+    <!-- ─── CONTENIDO PRINCIPAL ──────────────────────────────────── -->
+    <main class="main-content">
+
+        <!-- SECCIÓN: PRODUCTOS -->
+        <section class="dash-section active" id="section-products">
+            <div class="section-header">
+                <div>
+                    <h2>🍽️ Gestión del Menú</h2>
+                    <p class="section-subtitle">Crea, edita y elimina los productos de tu restaurante</p>
+                </div>
+                <button class="btn primary-btn" id="add-product-btn">+ Nuevo Producto</button>
+            </div>
+
+            <div class="stats-row" id="products-stats">
+                <div class="stat-card glass-card">
+                    <span class="stat-value" id="stat-total-products">–</span>
+                    <span class="stat-label">Total Productos</span>
+                </div>
+                <div class="stat-card glass-card">
+                    <span class="stat-value" id="stat-available-products">–</span>
+                    <span class="stat-label">Disponibles</span>
+                </div>
+                <div class="stat-card glass-card">
+                    <span class="stat-value" id="stat-avg-price">–</span>
+                    <span class="stat-label">Precio Promedio</span>
+                </div>
+            </div>
+
+            <div class="table-wrapper glass-card">
+                <div class="table-toolbar">
+                    <input type="search" id="product-search" class="search-input" placeholder="🔍 Buscar producto...">
+                    <select id="category-filter" class="filter-select">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Disponible</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody">
+                            <tr><td colspan="5" class="loading-row">Cargando productos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CATEGORÍAS -->
+        <section class="dash-section" id="section-categories">
+            <div class="section-header">
+                <div>
+                    <h2>📂 Categorías</h2>
+                    <p class="section-subtitle">Organiza tu menú por categorías</p>
+                </div>
+                <button class="btn secondary-btn" id="add-category-btn">+ Nueva Categoría</button>
+            </div>
+
+            <div class="categories-grid" id="categories-grid">
+                <div class="loading-row">Cargando categorías...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ─── MODAL: PRODUCTO ──────────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="product-modal-overlay">
+        <div class="modal glass-card" id="product-modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Nuevo Producto</h3>
+                <button class="modal-close-btn" id="modal-close-btn">✕</button>
+            </div>
+            <form id="product-form" class="modal-form" novalidate>
+                <input type="hidden" id="product-id">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Nombre *</label>
+                        <input type="text" id="product-name" placeholder="Ej: Hamburguesa Clásica" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Precio *</label>
+                        <input type="number" id="product-price" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Descripción</label>
+                    <textarea id="product-description" rows="3" placeholder="Descripción del producto..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-category">Categoría</label>
+                        <select id="product-category">
+                            <option value="">Sin categoría</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-image">URL de Imagen</label>
+                        <input type="url" id="product-image" placeholder="https://...">
+                    </div>
+                </div>
+
+                <div class="form-group toggle-group">
+                    <label for="product-available">Disponible para ordenar</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="product-available" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-error" id="product-form-error"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn" id="cancel-product-btn" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+                    <button type="submit" class="btn primary-btn" id="save-product-btn">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── MODAL: CATEGORÍA ─────────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="category-modal-overlay">
+        <div class="modal glass-card" id="category-modal">
+            <div class="modal-header">
+                <h3>Nueva Categoría</h3>
+                <button class="modal-close-btn" id="cat-modal-close-btn">✕</button>
+            </div>
+            <form id="category-form" class="modal-form" novalidate>
+                <div class="form-group">
+                    <label for="cat-name">Nombre *</label>
+                    <input type="text" id="cat-name" placeholder="Ej: Bebidas, Combos..." required>
+                </div>
+                <div class="form-group">
+                    <label for="cat-description">Descripción</label>
+                    <textarea id="cat-description" rows="2" placeholder="Descripción de la categoría..."></textarea>
+                </div>
+                <div class="form-error" id="category-form-error"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" id="cancel-category-btn" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+                    <button type="submit" class="btn secondary-btn">Guardar Categoría</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── TOAST NOTIFICATION ───────────────────────────────────── -->
+    <div class="toast hidden" id="toast" role="alert"></div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastFood API Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="logo">
+                <span class="logo-icon">🍔</span>
+                <h1>FastFood <span class="highlight">API Dashboard</span></h1>
+            </div>
+            <p>Control Panel para monitorizar los servicios del restaurante</p>
+        </header>
+
+        <main class="grid-container">
+            <!-- Card 1: Health Check -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Estado del Sistema</h2>
+                    <span class="status-indicator" id="health-indicator"></span>
+                </div>
+                <p class="card-desc">Verifica si el backend y la base de datos están operativos.</p>
+                <button id="health-btn" class="btn primary-btn">Comprobar Estado</button>
+                <div class="result-box" id="health-result">Esperando comprobación...</div>
+            </div>
+
+            <!-- Card 2: Auth Token -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Autenticación</h2>
+                    <span class="icon">🔑</span>
+                </div>
+                <p class="card-desc">Genera un token de desarrollo para probar rutas protegidas.</p>
+                <button id="auth-btn" class="btn secondary-btn">Generar Dev Token</button>
+                <div class="result-box token-box" id="auth-result">No hay token activo.</div>
+            </div>
+
+            <!-- Card 3: Protected Route -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Ruta Protegida</h2>
+                    <span class="icon">🛡️</span>
+                </div>
+                <p class="card-desc">Prueba acceder a datos sensibles usando tu token generado.</p>
+                <button id="protected-btn" class="btn accent-btn">Acceder a Datos</button>
+                <div class="result-box" id="protected-result">Esperando petición...</div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

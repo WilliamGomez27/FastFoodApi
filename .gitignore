@@ -1,0 +1,17 @@
+# Configuración personal de VS Code
+.vscode/settings.json
+
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.local
+
+# Archivos de notas
+*.txt
+*.txt.md
+
+# Logs
+*.log
+npm-debug.log*

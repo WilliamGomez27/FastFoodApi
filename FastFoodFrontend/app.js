@@ -1,7 +1,4 @@
-// BASE_URL adaptable a entorno
-const BASE_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:3000/api'
-    : 'https://tu-dominio.com/api';
+const BASE_URL = window.FastFoodConfig?.apiBaseUrl;
 
 // Recupera el token si ya existía (sobrevive al recargar)
 let devToken = sessionStorage.getItem('devToken') || null;
@@ -16,6 +13,13 @@ const authResult = document.getElementById('auth-result');
 
 const protectedBtn = document.getElementById('protected-btn');
 const protectedResult = document.getElementById('protected-result');
+
+if (!BASE_URL) {
+    const message = 'No se configuró la URL de la API. Revisa api-base-url.';
+    [healthBtn, authBtn, protectedBtn].forEach((button) => { button.disabled = true; });
+    healthResult.textContent = message;
+    healthResult.classList.add('error-text');
+}
 
 // 1. Health Check
 healthBtn.addEventListener('click', async () => {
@@ -57,7 +61,7 @@ authBtn.addEventListener('click', async () => {
         });
         const data = await response.json();
 
-        if (response.ok && data.token) {
+        if (response.ok && data?.token) {
             devToken = data.token;
             sessionStorage.setItem('devToken', devToken);
             authResult.textContent = 'Token generado y guardado correctamente.';

@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = window.FastFoodConfig?.apiBaseUrl;
 
 // ─── AUTENTICACIÓN ────────────────────────────────────────────────────────────
 
@@ -23,8 +23,17 @@ document.getElementById('logout-btn').addEventListener('click', () => {
   window.location.href = 'login.html';
 });
 
+async function getErrorMessage(response, fallback) {
+  const data = await response.clone().json().catch(() => null);
+  return data?.message || `${fallback} (HTTP ${response.status}).`;
+}
+
 // Helper para llamadas autenticadas al API
 async function apiFetch(endpoint, options = {}) {
+  if (!BASE_URL) {
+    throw new Error('No se configuró la URL de la API. Revisa api-base-url.');
+  }
+
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -35,7 +44,9 @@ async function apiFetch(endpoint, options = {}) {
   });
   if (res.status === 401) {
     localStorage.removeItem('ff_token');
+    localStorage.removeItem('ff_user');
     window.location.href = 'login.html';
+    throw new Error('La sesión expiró o no es válida.');
   }
   return res;
 }
@@ -82,11 +93,13 @@ const productFormError    = document.getElementById('product-form-error');
 async function loadProducts() {
   try {
     const res = await apiFetch('/products');
+    if (!res.ok) throw new Error(await getErrorMessage(res, 'No se pudieron cargar los productos'));
     allProducts = await res.json();
     renderProductsTable(allProducts);
     updateProductStats(allProducts);
-  } catch {
-    productsTbody.innerHTML = '<tr><td colspan="5" class="loading-row">Error al cargar productos.</td></tr>';
+  } catch (error) {
+    productsTbody.innerHTML = '<tr><td colspan="5" class="loading-row"></td></tr>';
+    productsTbody.querySelector('td').textContent = error.message;
   }
 }
 
@@ -195,7 +208,7 @@ window.deleteProduct = async (id, name) => {
       showToast(`"${name}" eliminado correctamente.`);
       await loadProducts();
     } else {
-      showToast('Error al eliminar el producto.', 'error');
+      showToast(await getErrorMessage(res, 'Error al eliminar el producto'), 'error');
     }
   } catch {
     showToast('Error de conexión.', 'error');
@@ -240,8 +253,7 @@ productForm.addEventListener('submit', async (e) => {
       closeProductModal();
       await loadProducts();
     } else {
-      const data = await res.json();
-      productFormError.textContent = data.message || 'Error al guardar.';
+      productFormError.textContent = await getErrorMessage(res, 'Error al guardar el producto');
     }
   } catch {
     productFormError.textContent = 'Error de conexión.';
@@ -261,13 +273,15 @@ const categoryFormError     = document.getElementById('category-form-error');
 async function loadCategories() {
   try {
     const res    = await apiFetch('/categories');
+    if (!res.ok) throw new Error(await getErrorMessage(res, 'No se pudieron cargar las categorías'));
     allCategories = await res.json();
     renderCategoriesGrid(allCategories);
     // Actualizar select del filtro de tabla
     categoryFilter.innerHTML = '<option value="">Todas las categorías</option>' +
       allCategories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  } catch {
-    categoriesGrid.innerHTML = '<div class="loading-row">Error al cargar categorías.</div>';
+  } catch (error) {
+    categoriesGrid.innerHTML = '<div class="loading-row"></div>';
+    categoriesGrid.firstElementChild.textContent = error.message;
   }
 }
 
@@ -320,8 +334,7 @@ categoryForm.addEventListener('submit', async (e) => {
       closeCategoryModal();
       await loadCategories();
     } else {
-      const data = await res.json();
-      categoryFormError.textContent = data.message || 'Error al guardar.';
+      categoryFormError.textContent = await getErrorMessage(res, 'Error al guardar la categoría');
     }
   } catch {
     categoryFormError.textContent = 'Error de conexión.';
@@ -337,7 +350,7 @@ window.deleteCategory = async (id, name) => {
       showToast(`Categoría "${name}" eliminada.`);
       await loadCategories();
     } else {
-      showToast('Error al eliminar categoría.', 'error');
+      showToast(await getErrorMessage(res, 'Error al eliminar la categoría'), 'error');
     }
   } catch {
     showToast('Error de conexión.', 'error');

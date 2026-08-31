@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = window.FastFoodConfig?.apiBaseUrl;
 
 const loginForm = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
@@ -11,6 +11,11 @@ const togglePwBtn = document.getElementById('toggle-password');
 // Si ya hay sesión activa, redirigir al dashboard
 if (localStorage.getItem('ff_token')) {
   window.location.href = 'dashboard.html';
+}
+
+if (!BASE_URL) {
+  loginError.textContent = 'No se configuró la URL de la API. Revisa api-base-url.';
+  loginForm.querySelector('button[type="submit"]').disabled = true;
 }
 
 // Mostrar/ocultar contraseña
@@ -45,14 +50,14 @@ loginForm.addEventListener('submit', async (e) => {
       body: JSON.stringify({ email, password })
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
-    if (response.ok && data.token) {
+    if (response.ok && data?.token) {
       localStorage.setItem('ff_token', data.token);
       localStorage.setItem('ff_user', JSON.stringify(data.user));
       window.location.href = 'dashboard.html';
     } else {
-      loginError.textContent = data.message || 'Credenciales inválidas.';
+      loginError.textContent = data?.message || `No se pudo iniciar sesión (HTTP ${response.status}).`;
     }
   } catch (error) {
     loginError.textContent = 'No se pudo conectar con el servidor. ¿Está el backend encendido?';

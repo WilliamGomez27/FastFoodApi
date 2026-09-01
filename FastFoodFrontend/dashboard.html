@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastFood Manager – Dashboard</title>
-    <meta name="description" content="Panel de control para gestionar productos y categorías del restaurante.">
+    <meta name="description" content="Panel de control para gestionar tu restaurante FastFood.">
     <meta name="api-base-url" content="">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
@@ -20,12 +20,23 @@
 
         <nav class="sidebar-nav">
             <button class="nav-btn active" data-section="products" id="nav-products">
-                <span class="nav-icon">🍽️</span>
-                <span>Menú / Productos</span>
+                <span class="nav-icon">🍽️</span><span>Menú / Productos</span>
             </button>
             <button class="nav-btn" data-section="categories" id="nav-categories">
-                <span class="nav-icon">📂</span>
-                <span>Categorías</span>
+                <span class="nav-icon">📂</span><span>Categorías</span>
+            </button>
+            <button class="nav-btn" data-section="inventory" id="nav-inventory">
+                <span class="nav-icon">📦</span><span>Inventario</span>
+            </button>
+            <button class="nav-btn" data-section="purchases" id="nav-purchases">
+                <span class="nav-icon">🛒</span><span>Compras</span>
+            </button>
+            <button class="nav-btn" data-section="sales" id="nav-sales">
+                <span class="nav-icon">💰</span><span>Ventas</span>
+            </button>
+            <!-- Solo visible para admin -->
+            <button class="nav-btn admin-only" data-section="users" id="nav-users">
+                <span class="nav-icon">👥</span><span>Usuarios</span>
             </button>
         </nav>
 
@@ -36,76 +47,133 @@
                 <span class="user-role" id="user-role-display">admin</span>
             </div>
         </div>
-
         <button class="btn logout-btn" id="logout-btn">🚪 Cerrar Sesión</button>
     </aside>
 
     <!-- ─── CONTENIDO PRINCIPAL ──────────────────────────────────── -->
     <main class="main-content">
 
-        <!-- SECCIÓN: PRODUCTOS -->
+        <!-- ── PRODUCTOS ── -->
         <section class="dash-section active" id="section-products">
             <div class="section-header">
                 <div>
                     <h2>🍽️ Gestión del Menú</h2>
                     <p class="section-subtitle">Crea, edita y elimina los productos de tu restaurante</p>
                 </div>
-                <button class="btn primary-btn" id="add-product-btn">+ Nuevo Producto</button>
+                <button class="btn primary-btn" id="add-product-btn" style="width:auto;padding:.75rem 1.5rem">+ Nuevo Producto</button>
             </div>
-
             <div class="stats-row" id="products-stats">
-                <div class="stat-card glass-card">
-                    <span class="stat-value" id="stat-total-products">–</span>
-                    <span class="stat-label">Total Productos</span>
-                </div>
-                <div class="stat-card glass-card">
-                    <span class="stat-value" id="stat-available-products">–</span>
-                    <span class="stat-label">Disponibles</span>
-                </div>
-                <div class="stat-card glass-card">
-                    <span class="stat-value" id="stat-avg-price">–</span>
-                    <span class="stat-label">Precio Promedio</span>
-                </div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-total-products">–</span><span class="stat-label">Total Productos</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-available-products">–</span><span class="stat-label">Disponibles</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-avg-price">–</span><span class="stat-label">Precio Promedio</span></div>
             </div>
-
             <div class="table-wrapper glass-card">
                 <div class="table-toolbar">
                     <input type="search" id="product-search" class="search-input" placeholder="🔍 Buscar producto...">
-                    <select id="category-filter" class="filter-select">
-                        <option value="">Todas las categorías</option>
-                    </select>
+                    <select id="category-filter" class="filter-select"><option value="">Todas las categorías</option></select>
                 </div>
                 <div class="table-scroll">
-                    <table class="data-table" id="products-table">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Categoría</th>
-                                <th>Precio</th>
-                                <th>Disponible</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="products-tbody">
-                            <tr><td colspan="5" class="loading-row">Cargando productos...</td></tr>
-                        </tbody>
+                    <table class="data-table">
+                        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Disponible</th><th>Acciones</th></tr></thead>
+                        <tbody id="products-tbody"><tr><td colspan="5" class="loading-row">Cargando productos...</td></tr></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: CATEGORÍAS -->
+        <!-- ── CATEGORÍAS ── -->
         <section class="dash-section" id="section-categories">
             <div class="section-header">
-                <div>
-                    <h2>📂 Categorías</h2>
-                    <p class="section-subtitle">Organiza tu menú por categorías</p>
-                </div>
-                <button class="btn secondary-btn" id="add-category-btn">+ Nueva Categoría</button>
+                <div><h2>📂 Categorías</h2><p class="section-subtitle">Organiza tu menú por categorías</p></div>
+                <button class="btn secondary-btn" id="add-category-btn" style="width:auto;padding:.75rem 1.5rem">+ Nueva Categoría</button>
             </div>
+            <div class="categories-grid" id="categories-grid"><div class="loading-row">Cargando categorías...</div></div>
+        </section>
 
-            <div class="categories-grid" id="categories-grid">
-                <div class="loading-row">Cargando categorías...</div>
+        <!-- ── INVENTARIO ── -->
+        <section class="dash-section" id="section-inventory">
+            <div class="section-header">
+                <div><h2>📦 Inventario</h2><p class="section-subtitle">Control de stock y alertas de mínimos</p></div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-total-items">–</span><span class="stat-label">Productos en Stock</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-low-stock" style="color:#ef4444">–</span><span class="stat-label">Stock Bajo ⚠️</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-out-stock" style="color:#ef4444">–</span><span class="stat-label">Sin Stock 🚫</span></div>
+            </div>
+            <div class="table-wrapper glass-card">
+                <div class="table-toolbar">
+                    <input type="search" id="inventory-search" class="search-input" placeholder="🔍 Buscar producto...">
+                    <select id="stock-filter" class="filter-select">
+                        <option value="">Todo el inventario</option>
+                        <option value="low">Stock bajo</option>
+                        <option value="out">Sin stock</option>
+                        <option value="ok">Stock OK</option>
+                    </select>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead><tr><th>Producto</th><th>Stock Actual</th><th>Stock Mínimo</th><th>Unidades/Paq</th><th>Precio Venta</th><th>Estado</th></tr></thead>
+                        <tbody id="inventory-tbody"><tr><td colspan="6" class="loading-row">Cargando inventario...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── COMPRAS ── -->
+        <section class="dash-section" id="section-purchases">
+            <div class="section-header">
+                <div><h2>🛒 Compras</h2><p class="section-subtitle">Registra compras a proveedores y actualiza el inventario</p></div>
+                <button class="btn secondary-btn" id="add-purchase-btn" style="width:auto;padding:.75rem 1.5rem">+ Nueva Compra</button>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-total-purchases">–</span><span class="stat-label">Compras Registradas</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-purchases-today">–</span><span class="stat-label">Compras Hoy</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-purchases-total">–</span><span class="stat-label">Total Invertido</span></div>
+            </div>
+            <div class="table-wrapper glass-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Precio Total</th><th>Fecha</th></tr></thead>
+                        <tbody id="purchases-tbody"><tr><td colspan="5" class="loading-row">Cargando compras...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── VENTAS ── -->
+        <section class="dash-section" id="section-sales">
+            <div class="section-header">
+                <div><h2>💰 Ventas</h2><p class="section-subtitle">Registra ventas y consulta el historial</p></div>
+                <button class="btn primary-btn" id="add-sale-btn" style="width:auto;padding:.75rem 1.5rem">+ Nueva Venta</button>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-sales-today">–</span><span class="stat-label">Ventas Hoy</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-revenue-today">–</span><span class="stat-label">Ingresos Hoy</span></div>
+                <div class="stat-card glass-card"><span class="stat-value" id="stat-sales-total">–</span><span class="stat-label">Total Histórico</span></div>
+            </div>
+            <div class="table-wrapper glass-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead><tr><th>ID Venta</th><th>Total</th><th>Fecha y Hora</th><th>Acciones</th></tr></thead>
+                        <tbody id="sales-tbody"><tr><td colspan="4" class="loading-row">Cargando ventas...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── USUARIOS (solo admin) ── -->
+        <section class="dash-section" id="section-users">
+            <div class="section-header">
+                <div><h2>👥 Usuarios y Permisos</h2><p class="section-subtitle">Gestiona empleados y sus permisos de acceso</p></div>
+                <button class="btn primary-btn" id="add-user-btn" style="width:auto;padding:.75rem 1.5rem">+ Nuevo Empleado</button>
+            </div>
+            <div class="table-wrapper glass-card">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Ventas</th><th>Inventario</th><th>Compras</th><th>Clientes</th><th>Reportes</th><th>Acciones</th></tr></thead>
+                        <tbody id="users-tbody"><tr><td colspan="9" class="loading-row">Cargando usuarios...</td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -113,55 +181,29 @@
 
     <!-- ─── MODAL: PRODUCTO ──────────────────────────────────────── -->
     <div class="modal-overlay hidden" id="product-modal-overlay">
-        <div class="modal glass-card" id="product-modal">
+        <div class="modal glass-card">
             <div class="modal-header">
                 <h3 id="modal-title">Nuevo Producto</h3>
                 <button class="modal-close-btn" id="modal-close-btn">✕</button>
             </div>
             <form id="product-form" class="modal-form" novalidate>
                 <input type="hidden" id="product-id">
-
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="product-name">Nombre *</label>
-                        <input type="text" id="product-name" placeholder="Ej: Hamburguesa Clásica" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-price">Precio *</label>
-                        <input type="number" id="product-price" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
+                    <div class="form-group"><label for="product-name">Nombre *</label><input type="text" id="product-name" placeholder="Ej: Hamburguesa Clásica" required></div>
+                    <div class="form-group"><label for="product-price">Precio *</label><input type="number" id="product-price" placeholder="0.00" step="0.01" min="0" required></div>
                 </div>
-
-                <div class="form-group">
-                    <label for="product-description">Descripción</label>
-                    <textarea id="product-description" rows="3" placeholder="Descripción del producto..."></textarea>
-                </div>
-
+                <div class="form-group"><label for="product-description">Descripción</label><textarea id="product-description" rows="3" placeholder="Descripción del producto..."></textarea></div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="product-category">Categoría</label>
-                        <select id="product-category">
-                            <option value="">Sin categoría</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-image">URL de Imagen</label>
-                        <input type="url" id="product-image" placeholder="https://...">
-                    </div>
+                    <div class="form-group"><label for="product-category">Categoría</label><select id="product-category"><option value="">Sin categoría</option></select></div>
+                    <div class="form-group"><label for="product-image">URL de Imagen</label><input type="url" id="product-image" placeholder="https://..."></div>
                 </div>
-
                 <div class="form-group toggle-group">
                     <label for="product-available">Disponible para ordenar</label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="product-available" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
+                    <label class="toggle-switch"><input type="checkbox" id="product-available" checked><span class="toggle-slider"></span></label>
                 </div>
-
                 <div class="form-error" id="product-form-error"></div>
-
                 <div class="modal-actions">
-                    <button type="button" class="btn" id="cancel-product-btn" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+                    <button type="button" class="btn" id="cancel-product-btn" style="background:rgba(255,255,255,0.08)">Cancelar</button>
                     <button type="submit" class="btn primary-btn" id="save-product-btn">Guardar Producto</button>
                 </div>
             </form>
@@ -170,30 +212,115 @@
 
     <!-- ─── MODAL: CATEGORÍA ─────────────────────────────────────── -->
     <div class="modal-overlay hidden" id="category-modal-overlay">
-        <div class="modal glass-card" id="category-modal">
+        <div class="modal glass-card">
             <div class="modal-header">
                 <h3>Nueva Categoría</h3>
                 <button class="modal-close-btn" id="cat-modal-close-btn">✕</button>
             </div>
             <form id="category-form" class="modal-form" novalidate>
-                <div class="form-group">
-                    <label for="cat-name">Nombre *</label>
-                    <input type="text" id="cat-name" placeholder="Ej: Bebidas, Combos..." required>
-                </div>
-                <div class="form-group">
-                    <label for="cat-description">Descripción</label>
-                    <textarea id="cat-description" rows="2" placeholder="Descripción de la categoría..."></textarea>
-                </div>
+                <div class="form-group"><label for="cat-name">Nombre *</label><input type="text" id="cat-name" placeholder="Ej: Bebidas, Combos..." required></div>
+                <div class="form-group"><label for="cat-description">Descripción</label><textarea id="cat-description" rows="2" placeholder="Descripción de la categoría..."></textarea></div>
                 <div class="form-error" id="category-form-error"></div>
                 <div class="modal-actions">
-                    <button type="button" class="btn" id="cancel-category-btn" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+                    <button type="button" class="btn" id="cancel-category-btn" style="background:rgba(255,255,255,0.08)">Cancelar</button>
                     <button type="submit" class="btn secondary-btn">Guardar Categoría</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ─── TOAST NOTIFICATION ───────────────────────────────────── -->
+    <!-- ─── MODAL: NUEVA COMPRA ──────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="purchase-modal-overlay">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3>Registrar Compra</h3>
+                <button class="modal-close-btn" id="purchase-modal-close-btn">✕</button>
+            </div>
+            <form id="purchase-form" class="modal-form" novalidate>
+                <div class="form-group">
+                    <label for="purchase-product">Producto *</label>
+                    <select id="purchase-product" required><option value="">Selecciona un producto...</option></select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="purchase-qty">Cantidad *</label><input type="number" id="purchase-qty" min="1" placeholder="0" required></div>
+                    <div class="form-group"><label for="purchase-price">Precio Total *</label><input type="number" id="purchase-price" min="0" step="0.01" placeholder="0.00" required></div>
+                </div>
+                <div class="form-error" id="purchase-form-error"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" id="cancel-purchase-btn" style="background:rgba(255,255,255,0.08)">Cancelar</button>
+                    <button type="submit" class="btn secondary-btn">Registrar Compra</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── MODAL: NUEVA VENTA ───────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="sale-modal-overlay">
+        <div class="modal glass-card" style="max-width:640px">
+            <div class="modal-header">
+                <h3>Registrar Venta</h3>
+                <button class="modal-close-btn" id="sale-modal-close-btn">✕</button>
+            </div>
+            <form id="sale-form" class="modal-form" novalidate>
+                <div id="sale-items-container">
+                    <div class="sale-item form-row" data-index="0">
+                        <div class="form-group"><label>Producto *</label><select class="sale-product-select" required><option value="">Selecciona...</option></select></div>
+                        <div class="form-group"><label>Cantidad *</label><input type="number" class="sale-qty-input" min="1" value="1" required></div>
+                        <div class="form-group"><label>Precio Unit.</label><input type="number" class="sale-price-input" min="0" step="0.01" placeholder="0.00" readonly></div>
+                    </div>
+                </div>
+                <button type="button" class="btn" id="add-sale-item-btn" style="background:rgba(255,255,255,0.08);margin-bottom:.5rem">+ Agregar Producto</button>
+                <div class="form-group" style="flex-direction:row;justify-content:space-between;align-items:center;padding:1rem;background:rgba(255,255,255,0.04);border-radius:10px">
+                    <span style="font-weight:600">Total Venta:</span>
+                    <span id="sale-total-display" style="font-size:1.4rem;font-weight:700;color:var(--success-color)">$0.00</span>
+                </div>
+                <div class="form-error" id="sale-form-error"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" id="cancel-sale-btn" style="background:rgba(255,255,255,0.08)">Cancelar</button>
+                    <button type="submit" class="btn primary-btn">Registrar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── MODAL: NUEVO USUARIO ─────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="user-modal-overlay">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3 id="user-modal-title">Nuevo Empleado</h3>
+                <button class="modal-close-btn" id="user-modal-close-btn">✕</button>
+            </div>
+            <form id="user-form" class="modal-form" novalidate>
+                <input type="hidden" id="user-id">
+                <div class="form-row">
+                    <div class="form-group"><label for="user-name">Nombre *</label><input type="text" id="user-name" placeholder="Nombre completo" required></div>
+                    <div class="form-group"><label for="user-email">Email *</label><input type="email" id="user-email" placeholder="empleado@email.com" required></div>
+                </div>
+                <div class="form-group" id="user-password-group">
+                    <label for="user-password">Contraseña *</label>
+                    <input type="password" id="user-password" placeholder="Mínimo 8 caracteres">
+                </div>
+                <!-- Permisos (solo para empleados) -->
+                <div id="permisos-section">
+                    <p style="font-size:.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:.75rem">PERMISOS DE ACCESO</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+                        <div class="form-group toggle-group"><label>Ventas</label><label class="toggle-switch"><input type="checkbox" id="perm-ventas"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group toggle-group"><label>Inventario</label><label class="toggle-switch"><input type="checkbox" id="perm-inventario"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group toggle-group"><label>Compras</label><label class="toggle-switch"><input type="checkbox" id="perm-compras"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group toggle-group"><label>Clientes</label><label class="toggle-switch"><input type="checkbox" id="perm-clientes"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group toggle-group"><label>Reportes</label><label class="toggle-switch"><input type="checkbox" id="perm-reportes"><span class="toggle-slider"></span></label></div>
+                    </div>
+                </div>
+                <div class="form-error" id="user-form-error"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" id="cancel-user-btn" style="background:rgba(255,255,255,0.08)">Cancelar</button>
+                    <button type="submit" class="btn primary-btn" id="save-user-btn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ────────────────────────────────────────────────── -->
     <div class="toast hidden" id="toast" role="alert"></div>
 
     <script src="api-config.js"></script>

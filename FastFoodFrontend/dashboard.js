@@ -583,7 +583,7 @@ function renderUsers(users) {
       <td>
         <div class="action-btns">
           ${u.role !== 'admin' ? `<button class="icon-btn" onclick="openEditUser(${u.id})">✏️</button>` : ''}
-          ${u.id !== (user?.id || 0) ? `<button class="icon-btn delete-btn" onclick="deleteUser(${u.id}, '${u.name.replace(/'/g,"\\'")}')">🗑️</button>` : ''}
+         ${u.id !== (user?.id || 0) ? `<button class="icon-btn delete-btn" onclick="deleteUser(${u.id}, '${u.name.replace(/'/g,"\\'")}')">🗑️</button>` : ''}
         </div>
       </td>
     </tr>

@@ -1,0 +1,6 @@
+Dockerfile
+.dockerignore
+*.test.js
+.git
+.gitignore
+README.md

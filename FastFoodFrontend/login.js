@@ -16,6 +16,24 @@ if (localStorage.getItem('ff_token')) {
 if (!BASE_URL) {
   loginError.textContent = 'No se configuró la URL de la API. Revisa api-base-url.';
   loginForm.querySelector('button[type="submit"]').disabled = true;
+} else {
+  // Detectar si el backend tiene autenticación desactivada en modo dev
+  fetch(`${BASE_URL}/health`)
+    .then(r => r.json())
+    .then(data => {
+      if (data?.authDisabled) {
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background:#fef3c7;color:#92400e;padding:10px;border-radius:6px;margin-bottom:15px;font-size:0.85rem;text-align:center;border:1px solid #fde68a;';
+        banner.innerHTML = '⚠️ <strong>Modo desarrollo:</strong> Autenticación desactivada en la API.<br><button type="button" id="btn-dev-bypass" style="margin-top:6px;padding:6px 12px;cursor:pointer;background:#d97706;color:#fff;border:none;border-radius:4px;font-weight:bold;">⚡ Entrar directo al Dashboard</button>';
+        loginForm.prepend(banner);
+        document.getElementById('btn-dev-bypass')?.addEventListener('click', () => {
+          localStorage.setItem('ff_token', 'dev-bypass-token');
+          localStorage.setItem('ff_user', JSON.stringify({ name: 'Dev Admin', role: 'admin' }));
+          window.location.href = 'dashboard.html';
+        });
+      }
+    })
+    .catch(() => {});
 }
 
 // Mostrar/ocultar contraseña

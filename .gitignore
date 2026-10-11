@@ -1,17 +1,34 @@
-# Configuración personal de VS Code
-.vscode/settings.json
-
-# Dependencias
+# Dependencias de cualquier nivel
+**/node_modules/
 node_modules/
 
-# Variables de entorno
+# Archivos de entorno y secretos (NUNCA SUBIR)
 .env
-.env.local
+.env.*
+!.env.example
+**/env
+**/.env
+**/.env.*
+!**/.env.example
 
-# Archivos de notas
-*.txt
-*.txt.md
+# Certificados y llaves privadas
+*.pem
+*.key
+*.cert
+*.crt
 
-# Logs
+# Cobertura de pruebas y logs
+**/coverage/
+coverage/
 *.log
 npm-debug.log*
+
+# Configuración de editor y sistema operativo
+.vscode/
+**/.vscode/
+.DS_Store
+Thumbs.db
+
+# Notas privadas
+*.txt
+*.txt.md

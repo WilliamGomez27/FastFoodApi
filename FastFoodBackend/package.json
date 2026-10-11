@@ -1,0 +1,45 @@
+{
+  "name": "fast-food-web-api",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend web para FastFoodApp",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/config/env.js",
+    "test": "node --import ./src/tests/setup.js --test \"src/tests/unit/**/*.test.js\" \"src/tests/api/**/*.test.js\" \"src/tests/security/**/*.test.js\"",
+    "test:unit": "node --import ./src/tests/setup.js --test \"src/tests/unit/**/*.test.js\"",
+    "test:api": "node --import ./src/tests/setup.js --test \"src/tests/api/**/*.test.js\"",
+    "test:security": "node --import ./src/tests/setup.js --test \"src/tests/security/**/*.test.js\"",
+    "test:integration": "node --import ./src/tests/setup.js --test --test-concurrency=1 \"src/tests/integration/**/*.test.js\"",
+    "test:coverage": "node --import ./src/tests/setup.js --test --experimental-test-coverage --test-coverage-exclude=\"src/tests/**\" --test-coverage-exclude=\"src/scripts/**\" \"src/tests/unit/**/*.test.js\" \"src/tests/api/**/*.test.js\" \"src/tests/security/**/*.test.js\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "audit": "npm audit --omit=dev --audit-level=high",
+    "init-db": "node src/scripts/initDb.js",
+    "seed-db": "node src/scripts/initDb.js --seed",
+    "reset-admin": "node src/scripts/resetAdmin.js",
+    "verify-security": "node src/scripts/verifySecurity.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.12.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-plugin-security": "^4.2.0",
+    "supertest": "^7.3.1"
+  }
+}

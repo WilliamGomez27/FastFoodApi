@@ -1,0 +1,53 @@
+name: CI Backend & Frontend Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend-test:
+    name: Backend Lint, Audit & Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./FastFoodBackend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: FastFoodBackend/package-lock.json
+
+      - name: Instalar dependencias backend
+        run: npm ci
+
+      - name: Lint de código y seguridad
+        run: npm run lint
+
+      - name: Auditoría de dependencias (High+)
+        run: npm run audit
+
+      - name: Ejecutar suite de pruebas unitarias y de seguridad
+        run: npm run test:coverage
+
+  frontend-test:
+    name: Frontend Session Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./FastFoodFrontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ejecutar pruebas de frontend
+        run: node --test auth.test.js
